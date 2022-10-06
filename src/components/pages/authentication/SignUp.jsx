@@ -1,58 +1,38 @@
 import React, { useEffect, useState } from "react";
-import firebase from "firebase/compat/app";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
 import { Form, Modal } from "react-bootstrap";
-import { auth, db } from "../../../firebase";
-import { useCollection } from "react-firebase-hooks/firestore";
+import { auth } from "../../../firebase";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useDispatch, useSelector } from "react-redux";
+import * as actionUser from "../../../redux/actions/actionUser";
+import { bindActionCreators } from "redux";
 
 export default function Signup() {
   const [darkMode, setDarkMode] = useState("");
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showModal, setShowModal] = useState(false);
 
   // Validation
-  const [invalidUsername, setInvalidUsername] = useState(false);
   const [invalidEmail, setInvalidEmail] = useState(false);
   const [invalidPassword, setInvalidPassword] = useState(false);
 
-  const [userList] = useCollection(db.collection("users"));
+  const navigate = useNavigate();
+  const { registerUser } = bindActionCreators(actionUser, useDispatch());
   const [user] = useAuthState(auth);
   const activeUser = useSelector((state) => state.activeUser);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (user || activeUser.email) {
-      // navigate home page
-      navigate("/")
+      navigate("/");
     }
-  })
+  });
 
   const checkIfValid = () => {
     let isValid = true;
-    userList?.docs.forEach((doc) => {
-      // Check if username is valid
-      if (doc.data().username === username || !username) {
-        isValid = false;
-        setInvalidUsername(true);
-      } else {
-        setInvalidUsername(false);
-      }
-
-      // Check if email is valid
-      if (doc.data().email === email || !email) {
-        isValid = false;
-        setInvalidEmail(true);
-      } else {
-        setInvalidEmail(false);
-      }
-    });
 
     // Check if password is same with confirmPassword
     if (password !== confirmPassword || !password) {
@@ -67,21 +47,22 @@ export default function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (checkIfValid()) {
-      db.collection("users").add({
-        username: username,
-        email: email,
-        password: password,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      });
-      setShowModal(true);
+      registerUser({ email: email, password: password })
+        .then((response) => {
+          console.log(response, "response");
+          setInvalidEmail(false);
+          setShowModal(true);
+        })
+        .catch((error) => {
+          setInvalidEmail(true);
+          console.log(error, "error");
+        });
     }
   };
 
   const closeRegistration = () => {
     setShowModal(false);
-    setUsername("");
     setEmail("");
     setPassword("");
     setConfirmPassword("");
@@ -105,21 +86,6 @@ export default function Signup() {
               </div>
               <h5 className="text-center fst-italic">Shopping-Style-Fashion</h5>
               <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-2">
-                  <Form.Label>Username</Form.Label>
-                  <Form.Control
-                    type="text"
-                    className={`form-control auth-input${darkMode}`}
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    isInvalid={invalidUsername}
-                  ></Form.Control>
-                  <Form.Control.Feedback type="invalid">
-                    username already exist.
-                  </Form.Control.Feedback>
-                </Form.Group>
-
                 <Form.Group className="mb-2">
                   <Form.Label>Email</Form.Label>
                   <Form.Control
