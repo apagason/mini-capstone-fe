@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { specials } from "../utilities/enum";
+import { specials } from "../utilities/enums";
 
 export default function Specials() {
   const renderSpecials = () => {

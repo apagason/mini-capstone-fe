@@ -7,7 +7,7 @@ export default function ContactUs() {
       <div className="container p-5">
         <div className="row align-items-center">
           <div className="col-lg-4">
-            <img src="images/cntact.jpg" alt="contact" className="w-100" />
+            <img src="/images/cntact.jpg" alt="contact" className="w-100" />
           </div>
           <div className="col-lg-6 offset-lg-1">
             <form>

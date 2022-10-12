@@ -17,7 +17,7 @@ export default function Hero() {
           <h2 className="text-white">Best Price & Offer</h2>
           <h1 className="text-white py-2 fw-bold">NEW SEASON</h1>
           <Link to="/products" className="btn">
-            SHOP NOW
+            BUY NOW
           </Link>
         </Carousel.Item>
         <Carousel.Item className="text-center">

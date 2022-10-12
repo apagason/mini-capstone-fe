@@ -149,6 +149,7 @@ export const bestSelling = [
     price: "$ 15.00",
   },
 ];
+
 export const onSale = [
   {
     id: 1,
